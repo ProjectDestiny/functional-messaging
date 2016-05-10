@@ -9,7 +9,7 @@ Receiver* _SharedReceiverData::GetReceiver() {
 	return objectReceiver;
 }
 
-void _SharedReceiverData::SetGetReceiverFor(void * ptr) {
+void _SharedReceiverData::SetGetReceiverFor(const void * ptr) {
 	objectReceiver = GetManager().GetReceiverFor(ptr);
 }
 

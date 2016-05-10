@@ -8,10 +8,10 @@ class Receiver;
 class PostOffice
 {
 public:
-	Receiver* GetReceiverFor(void* ptr);
+	Receiver* GetReceiverFor(const void* ptr);
 private:
 	// associates an object pointer to its own receiver
-	std::unordered_map<void*, Receiver*> clientReceivers;
+	std::unordered_map<const void*, Receiver*> clientReceivers;
 };
 
 #endif
