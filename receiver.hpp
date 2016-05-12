@@ -1,7 +1,10 @@
 #ifndef RECEIVER_H
 #define RECEIVER_H
 
-class Receiver;
+class Receiver
+{
+
+};
 
 template <typename T> Receiver *get_receiver(T obj);
 
