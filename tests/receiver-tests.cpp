@@ -21,6 +21,6 @@ TEST(ReceiverCreation,
 	MockObj* mock = nullptr;
 	std::cout << "consts: " << std::is_const<MockObj*>::value << std::endl;
 
-	Receiver* rec = get_receiver(mock);
+	Receiver<MockObj>* rec = get_receiver(mock);
 	ASSERT_EQ(rec,nullptr);
 }

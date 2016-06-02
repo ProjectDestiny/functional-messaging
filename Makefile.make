@@ -1,5 +1,5 @@
 
-CFLAGS=-std=c++14
+CFLAGS=-std=c++14 -stdlib=libc++
 PROJECT_NAME=functional-messaging
 
 # target: dependencies

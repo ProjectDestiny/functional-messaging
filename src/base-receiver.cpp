@@ -1,11 +1,12 @@
 #include "base-receiver.hpp"
 #include "post-office.hpp"
+#include "receiver.hpp"
 
 _SharedReceiverData::_SharedReceiverData() {
 
 }
 
-Receiver* _SharedReceiverData::GetReceiver() {
+OpaqueReceiver* _SharedReceiverData::GetReceiver() {
 	return objectReceiver;
 }
 

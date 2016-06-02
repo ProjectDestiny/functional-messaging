@@ -6,7 +6,7 @@
 #include <iostream>
 
 class PostOffice;
-class Receiver;
+class OpaqueReceiver;
 
 class _SharedReceiverData
 {
@@ -14,12 +14,11 @@ public:
 	_SharedReceiverData();
     ~_SharedReceiverData() {};
 
-	Receiver * GetReceiver();
+	OpaqueReceiver * GetReceiver();
 
 protected:
 	PostOffice& GetManager();
 	void SetGetReceiverFor(const void * ptr);
-
 
 	template <typename T>
 	class _ConstChecker
@@ -63,28 +62,7 @@ protected:
 		}
 	};
 
-	template <typename T>
-	class _ConstChecker<const T *>
-	{
-	public:
-		const void * operator()(const T * obj) {
-			const void* voidPtrVal = nullptr;
-			std::cout << "consts: " << std::is_const<const T*>::value << std::endl;
-			if(std::is_const<const T*>::value)
-			{
-				// If pointer is const, remove qualifier, then
-				// interpret pointer as being void*
-				voidPtrVal = static_cast<const void*>(const_cast<const T*>(obj));
-			}
-			else
-			{
-				voidPtrVal = static_cast<const void*>(obj);
-			}
-			return voidPtrVal;
-		}
-	};
-
-    Receiver* objectReceiver;
+    OpaqueReceiver* objectReceiver;
 };
 
 #endif
