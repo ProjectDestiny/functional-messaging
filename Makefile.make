@@ -8,9 +8,6 @@ all:
 	g++ aesthetic-look.cpp -o messaging.out
 
 # This section compiles each of the project files. A
-receiver.o: receiver.cpp
-	g++ $(CFLAGS) -c src/receiver.cpp
-
 base-receiver.o: base-receiver.cpp
 	g++ $(CFLAGS) -c src/base-receiver.cpp
 
@@ -26,7 +23,6 @@ gtest-build:
 	g++ ${CFLAGS} -isystem $(GTEST_DIR)/include -pthread \
 		tests/tests-main.cpp \
 		tests/receiver-tests.cpp \
-		src/receiver.cpp \
 		src/base-receiver.cpp \
 		src/post-office.cpp \
 		$(GTEST_DIR)/libgtest.a -o ${PROJECT_NAME}-tests.out

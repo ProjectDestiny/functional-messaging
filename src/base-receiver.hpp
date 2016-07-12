@@ -17,8 +17,10 @@ public:
 	OpaqueReceiver * GetReceiver();
 
 protected:
-	PostOffice& GetManager();
-	void SetGetReceiverFor(const void * ptr);
+	PostOffice& GetPostOffice();
+	bool CanGetReceiverFor(const void * ptr);
+	void SetReceiverFor(const void * ptr);
+	void SetNewReceiverFor(const void * ptr, OpaqueReceiver * receiver);
 
 	template <typename T>
 	class _ConstChecker
@@ -26,7 +28,6 @@ protected:
 	public:
 	    void * operator()(T obj) {
 			void* voidPtrVal = nullptr;
-			std::cout << "consts: " << std::is_const<T>::value << std::endl;
 			if(std::is_const<T>::value)
 			{
 				// If pointer is const, remove qualifier, then
@@ -47,7 +48,6 @@ protected:
 	public:
 	    void * operator()(T * obj) {
 			void* voidPtrVal = nullptr;
-			std::cout << "consts: " << std::is_const<T *>::value << std::endl;
 			if(std::is_const<T*>::value)
 			{
 				// If pointer is const, remove qualifier, then

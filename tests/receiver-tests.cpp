@@ -16,11 +16,26 @@ public:
 	MockObj() {}
 };
 
-TEST(ReceiverCreation,
-     GetReceiverFromPtr) {
+TEST(ReceiverCreation, GetReceiverReturnsNullptrForEmptyPointerObject) {
 	MockObj* mock = nullptr;
-	std::cout << "consts: " << std::is_const<MockObj*>::value << std::endl;
-
-	Receiver<MockObj>* rec = get_receiver(mock);
+	auto rec = get_receiver(mock);
 	ASSERT_EQ(rec,nullptr);
 }
+
+TEST(ReceiverCreation, GetReceiverReturnsNewReceiverForNonEmptyObject) {
+	MockObj* mock = new MockObj;
+	auto rec = get_receiver(mock);
+	ASSERT_NE(rec,nullptr);
+}
+
+TEST(ReceiverCreation, GetReceiverReturnsNewReceiverForObjectInstance) {
+	MockObj mock;
+	auto rec = get_receiver(mock);
+	ASSERT_NE(rec,nullptr);
+}
+
+// TEST(ReceiverCreation, GetReceiverReturnsNullptrForConstEmptyPointerObject) {
+// 	MockObj * const mock = nullptr;
+// 	auto *rec = get_receiver(mock);
+// 	ASSERT_EQ(rec,nullptr);
+// }

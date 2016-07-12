@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
+#include <iostream>
 #include "opaque-receiver.hpp"
 
 class Response;
@@ -23,9 +24,7 @@ public:
 private:
 	ReceiverOwnerPtrType owner;
 
-	// A response object has a map of keys with the names of the messages
-	// it responds to.
-	// When receiving a message, the correct array of responses will be fetched.
+	// A response object has key-vector pairing, where key is a message name.
 	// From there, we will grab the correct response for the sender of the message.
 	// If the message has no sender, then we will look for a response to the message
 	// that comes from the global scope.
@@ -61,7 +60,7 @@ public:
 };
 
 template <typename T>
-Receiver<T> *get_receiver(T & obj);
+OpaqueReceiver *get_receiver(T & obj);
 
 template <typename T>
 InterMediateReceiverCreator<T> &subscribe(T obj);
