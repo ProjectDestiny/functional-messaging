@@ -23,10 +23,10 @@ protected:
 	void SetNewReceiverFor(const void * ptr, OpaqueReceiver * receiver);
 
 	template <typename T>
-	class _ConstChecker
+	class _ConstCaster
 	{
 	public:
-	    void * operator()(T obj) {
+	    void * operator()(T & obj) {
 			void* voidPtrVal = nullptr;
 			if(std::is_const<T>::value)
 			{
@@ -43,7 +43,7 @@ protected:
 	};
 
 	template <typename T>
-	class _ConstChecker<T *>
+	class _ConstCaster<T *>
 	{
 	public:
 	    void * operator()(T * obj) {
@@ -59,6 +59,15 @@ protected:
 				voidPtrVal = static_cast<void*>(obj);
 			}
 			return voidPtrVal;
+		}
+	};
+
+	template <typename T>
+	class _ConstCaster<T const>
+	{
+	public:
+		void const * operator()(T const & obj) {
+			return static_cast<void const *>(&obj);;
 		}
 	};
 

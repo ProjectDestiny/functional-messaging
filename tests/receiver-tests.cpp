@@ -1,4 +1,6 @@
 #include <typeinfo>
+#include <iostream>
+#include <type_traits>
 #include "gtest/gtest.h"
 #include "../src/receiver.hpp"
 
@@ -28,14 +30,26 @@ TEST(ReceiverCreation, GetReceiverReturnsNewReceiverForNonEmptyObject) {
 	ASSERT_NE(rec,nullptr);
 }
 
+TEST(ReceiverCreation, GetReceiverReturnsNullptrForEmptyConstPointerObject) {
+	MockObj * const mock = nullptr;
+	auto rec = get_receiver(mock);
+	ASSERT_EQ(rec,nullptr);
+}
+
+TEST(ReceiverCreation, GetReceiverReturnsNewReceiverForNonEmptyConstPointerToObject) {
+	MockObj * const mock = new MockObj;
+	auto rec = get_receiver(mock);
+	ASSERT_NE(rec,nullptr);
+}
+
 TEST(ReceiverCreation, GetReceiverReturnsNewReceiverForObjectInstance) {
 	MockObj mock;
 	auto rec = get_receiver(mock);
 	ASSERT_NE(rec,nullptr);
 }
 
-// TEST(ReceiverCreation, GetReceiverReturnsNullptrForConstEmptyPointerObject) {
-// 	MockObj * const mock = nullptr;
-// 	auto *rec = get_receiver(mock);
-// 	ASSERT_EQ(rec,nullptr);
-// }
+TEST(ReceiverCreation, GetReceiverReturnsNewReceiverForConstObjectInstance) {
+	const MockObj mock;
+	auto rec = get_receiver(mock);
+	ASSERT_NE(rec,nullptr);
+}

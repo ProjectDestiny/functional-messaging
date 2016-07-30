@@ -26,12 +26,10 @@ struct PlainTypeViewer<T*>{
 // for an object of type T. It makes sure to also create the appropiate one for
 // an instance with no receiver yet, and it creates the template receiver by
 // removing all qualifier from type T.
-template <typename T>
+template <typename T, typename PlainType>
 class _ObjectReceiverFetcher : public _SharedReceiverData
 {
 public:
-    typedef typename PlainTypeViewer<T>::value PlainType;
-
 	_ObjectReceiverFetcher(T & obj) :
 	   _SharedReceiverData(),
 	   verifier()
@@ -52,15 +50,13 @@ private:
 		//clientReceivers.insert(std::make_pair<const void*,OpaqueReceiver* >(ptr,newReceiver));
 	}
 
-	_ConstChecker<T> verifier;
+	_ConstCaster<T> verifier;
 };
 
-template <typename T>
-class _ObjectReceiverFetcher<T*> : public _SharedReceiverData
+template <typename T, typename PlainType>
+class _ObjectReceiverFetcher<T*, PlainType> : public _SharedReceiverData
 {
 public:
-	typedef typename PlainTypeViewer<T*>::value PlainType;
-
 	_ObjectReceiverFetcher(T * obj) :
 	   _SharedReceiverData(),
 	   verifier()
@@ -81,7 +77,34 @@ private:
 		//clientReceivers.insert(std::make_pair<const void*,OpaqueReceiver* >(ptr,newReceiver));
 	}
 
-	_ConstChecker<T*> verifier;
+	_ConstCaster<T*> verifier;
+};
+
+template <typename T, typename PlainType>
+class _ObjectReceiverFetcher<T const, PlainType> : public _SharedReceiverData
+{
+public:
+	_ObjectReceiverFetcher(T const & obj) :
+	   _SharedReceiverData(),
+	   verifier()
+	{
+		void const * ptr = verifier(obj);
+		if(!CanGetReceiverFor(ptr)){
+			CreateNewReceiver(ptr);
+		} else {
+			SetReceiverFor(ptr);
+		}
+	}
+private:
+
+	void CreateNewReceiver(const void * ptr) {
+		auto newReceiver = new Receiver<PlainType>;
+		SetNewReceiverFor(ptr,newReceiver);
+		objectReceiver = newReceiver;
+		//clientReceivers.insert(std::make_pair<const void*,OpaqueReceiver* >(ptr,newReceiver));
+	}
+
+	_ConstCaster<T const> verifier;
 };
 
 //==============================================================================
@@ -106,13 +129,32 @@ struct NullPointerChecker<T*> {
 template<typename T>
 OpaqueReceiver *get_receiver(T & obj) {
 	// Remove all top level qualifiers, even if it is a pointer.
+	typedef typename PlainTypeViewer<T>::value RealType;
 
-	if(NullPointerChecker<T>().isNull(obj)) {
+	_ObjectReceiverFetcher<T, RealType> ownerChecker(obj);
+	return ownerChecker.GetReceiver();
+}
+
+template<typename T>
+OpaqueReceiver *get_receiver(T const & obj) {
+	typedef typename PlainTypeViewer<T const>::value RealType;
+	std::cout << "using get_receiver for const objects" << std::endl;
+
+	_ObjectReceiverFetcher<T const, RealType> ownerChecker(obj);
+	return ownerChecker.GetReceiver();;
+}
+
+template<typename T>
+OpaqueReceiver *get_receiver(T * obj) {
+	std::cout << "using get_receiver for pointers" << std::endl;
+	typedef typename PlainTypeViewer<T*>::value RealType;
+
+	// Remove all top level qualifiers, even if it is a pointer.
+	if(NullPointerChecker<T*>().isNull(obj)) {
 		return nullptr;
 	}
-	// how do we figure out if the object already has a receiver?
-	// if it's not receiver, create
-	_ObjectReceiverFetcher<T> ownerChecker(obj);
+
+	_ObjectReceiverFetcher<T*, RealType> ownerChecker(obj);
 	return ownerChecker.GetReceiver();;
 }
 
